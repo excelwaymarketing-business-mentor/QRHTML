@@ -1,5 +1,5 @@
 {
 "A1001":{"AssetName":"Dell Latitude 5420","Category":"Laptop","Location":"Office","Owner":"John","Status":"Active","History":[{"Date":"01-Jan-2025","Action":"Purchased","By":"Admin","Remarks":"New Asset"},{"Date":"15-Feb-2025","Action":"Assigned","By":"Admin","Remarks":"To John"},{"Date":"10-May-2025","Action":"Service","By":"Tech1","Remarks":"Battery Changed"}]},
 "A1002":{"AssetName":"HP LaserJet Pro","Category":"Printer","Location":"Warehouse","Owner":"Mike","Status":"Repair","History":[{"Date":"05-Jan-2025","Action":"Purchased","By":"Admin","Remarks":"New Printer"},{"Date":"20-Apr-2025","Action":"Repair","By":"Tech2","Remarks":"Toner Issue"}]},
-"A1003":{"AssetName":"Lenovo ThinkCentre","Category":"Desktop","Location":"Accounts","Owner":"Sarah","Status":"Active","History":[]}
+"A1003":{"AssetName":"Lenovo ThinkCentre","Category":"Desktop","Location":"Accounts","Owner":"Sarah","Status":"Active","History":[{"Date":"01-Jan-2025","Action":"Purchased","By":"Admin","Remarks":"New Asset"},{"Date":"20-Apr-2025","Action":"Repair","By":"Tech2","Remarks":"Toner Issue"}]}
 }
