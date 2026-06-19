@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Asset Portal</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f2f2;
+margin:0;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0px 2px 10px #ccc;
+margin:auto;
+max-width:800px;
+}
+
+h1{
+text-align:center;
+color:#003366;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+td,th{
+border:1px solid #ddd;
+padding:8px;
+}
+
+th{
+background:#003366;
+color:white;
+}
+
+.status{
+font-weight:bold;
+font-size:18px;
+}
+
+.green{
+color:green;
+}
+
+.orange{
+color:orange;
+}
+
+.red{
+color:red;
+}
+
+.blue{
+color:blue;
+}
+
+.footer{
+margin-top:20px;
+font-size:12px;
+text-align:center;
+color:gray;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>Asset Information</h1>
+
+<div id="output">
+
+Loading...
+
+</div>
+
+</div>
+
+<script>
+
+const params=new URLSearchParams(window.location.search);
+
+const assetid=params.get("id");
+
+fetch("assets.json")
+
+.then(response=>response.json())
+
+.then(data=>{
+
+if(!data[assetid]){
+
+document.getElementById("output").innerHTML="<h2>Asset Not Found</h2>";
+
+return;
+
+}
+
+let a=data[assetid];
+
+let statusclass="green";
+
+if(a.Status=="Repair") statusclass="orange";
+if(a.Status=="Disposed") statusclass="red";
+if(a.Status=="Reserved") statusclass="blue";
+
+let html="";
+
+html+="<table>";
+
+html+="<tr><td><b>Asset ID</b></td><td>"+assetid+"</td></tr>";
+
+html+="<tr><td><b>Name</b></td><td>"+a.AssetName+"</td></tr>";
+
+html+="<tr><td><b>Category</b></td><td>"+a.Category+"</td></tr>";
+
+html+="<tr><td><b>Location</b></td><td>"+a.Location+"</td></tr>";
+
+html+="<tr><td><b>Owner</b></td><td>"+a.Owner+"</td></tr>";
+
+html+="<tr><td><b>Status</b></td><td class='"+statusclass+" status'>"+a.Status+"</td></tr>";
+
+html+="</table>";
+
+html+="<br>";
+
+html+="<h2>History</h2>";
+
+html+="<table>";
+
+html+="<tr>";
+
+html+="<th>Date</th>";
+
+html+="<th>Action</th>";
+
+html+="<th>By</th>";
+
+html+="<th>Remarks</th>";
+
+html+="</tr>";
+
+a.History.forEach(function(h){
+
+html+="<tr>";
+
+html+="<td>"+h.Date+"</td>";
+
+html+="<td>"+h.Action+"</td>";
+
+html+="<td>"+h.By+"</td>";
+
+html+="<td>"+h.Remarks+"</td>";
+
+html+="</tr>";
+
+});
+
+html+="</table>";
+
+html+="<div class='footer'>";
+
+html+="Asset Portal";
+
+html+="</div>";
+
+document.getElementById("output").innerHTML=html;
+
+})
+
+.catch(function(){
+
+document.getElementById("output").innerHTML="<h2>Unable to load asset data.</h2>";
+
+});
+
+</script>
+
+</body>
+
+</html>
