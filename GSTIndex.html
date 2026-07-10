@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GST Compliance Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A;
+    --ink-soft:#33456e;
+    --paper:#F7F5EF;
+    --paper-raised:#FFFFFF;
+    --rule:#D8D2C2;
+    --gold:#B98A1E;
+    --gold-soft:#F3E6C6;
+    --green:#3E6B4F;
+    --green-soft:#E4EEE6;
+    --red:#8C3B2E;
+    --red-soft:#F3E3DF;
+    --text:#241F16;
+    --text-mute:#6B6555;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      repeating-linear-gradient(180deg, rgba(27,42,74,0.02) 0px, rgba(27,42,74,0.02) 1px, transparent 1px, transparent 36px);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:32px 20px 80px;}
+
+  /* Header / masthead */
+  .masthead{
+    border-bottom:3px solid var(--ink);
+    padding-bottom:18px;
+    margin-bottom:28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .masthead-title{
+    font-family:'Source Serif 4', serif;
+    font-weight:700;
+    font-size:clamp(28px,4vw,40px);
+    letter-spacing:-0.01em;
+    color:var(--ink);
+    margin:0;
+  }
+  .masthead-sub{
+    font-size:12.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--text-mute);
+    margin-top:6px;
+  }
+  .masthead-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--text-mute);
+    text-align:right;
+    line-height:1.6;
+  }
+
+  /* Breadcrumb */
+  .crumbs{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--text-mute);
+    margin-bottom:20px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .crumbs button{
+    background:none;border:none;cursor:pointer;
+    font-family:inherit;font-size:inherit;
+    color:var(--ink-soft);padding:2px 4px;
+    text-decoration:underline;text-underline-offset:3px;
+    text-decoration-color:var(--rule);
+  }
+  .crumbs button:hover{color:var(--gold);text-decoration-color:var(--gold);}
+  .crumbs .current{color:var(--ink);font-weight:600;}
+  .crumbs .sep{color:var(--rule);}
+
+  /* Search */
+  .search{
+    width:100%;
+    padding:12px 14px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:14px;
+    border:1.5px solid var(--rule);
+    background:var(--paper-raised);
+    border-radius:2px;
+    margin-bottom:26px;
+    color:var(--text);
+  }
+  .search:focus{outline:none;border-color:var(--ink);}
+  .search::placeholder{color:var(--text-mute);}
+
+  /* Header cards grid */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(230px,1fr));
+    gap:14px;
+  }
+  .card{
+    background:var(--paper-raised);
+    border:1.5px solid var(--rule);
+    border-left:4px solid var(--ink);
+    padding:18px 18px 16px;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    position:relative;
+  }
+  .card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(27,42,74,0.10);
+    border-left-color:var(--gold);
+  }
+  .card:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+  .card-eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:8px;
+  }
+  .card-title{
+    font-family:'Source Serif 4', serif;
+    font-weight:600;
+    font-size:20px;
+    color:var(--ink);
+    margin:0 0 6px;
+  }
+  .card-count{
+    font-size:12.5px;
+    color:var(--text-mute);
+  }
+
+  /* Subheader list */
+  .sub-list{display:flex;flex-direction:column;gap:10px;}
+  .sub-row{
+    background:var(--paper-raised);
+    border:1.5px solid var(--rule);
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    cursor:pointer;
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .sub-row:hover{border-color:var(--ink);background:#fffdf8;}
+  .sub-row:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+  .sub-row-title{
+    font-family:'Source Serif 4', serif;
+    font-weight:600;
+    font-size:17px;
+    color:var(--ink);
+  }
+  .sub-row-meta{
+    font-size:12.5px;
+    color:var(--text-mute);
+    margin-top:3px;
+  }
+  .chev{color:var(--gold);font-size:18px;flex-shrink:0;}
+
+  /* Stamp / frequency badge */
+  .stamp{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:3px 9px;
+    border-radius:20px;
+    border:1px solid currentColor;
+    white-space:nowrap;
+  }
+  .stamp.monthly{color:var(--green);background:var(--green-soft);}
+  .stamp.quarterly{color:var(--gold);background:var(--gold-soft);}
+  .stamp.annual{color:var(--red);background:var(--red-soft);}
+  .stamp.daily{color:var(--ink);background:#e9ecf3;}
+  .stamp.other{color:var(--text-mute);background:#efeee7;}
+
+  /* Detail view */
+  .detail{
+    background:var(--paper-raised);
+    border:1.5px solid var(--rule);
+    padding:0;
+  }
+  .detail-head{
+    padding:24px 26px 20px;
+    border-bottom:1.5px dashed var(--rule);
+    display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;
+  }
+  .detail-title{
+    font-family:'Source Serif 4', serif;
+    font-weight:700;
+    font-size:26px;
+    color:var(--ink);
+    margin:0 0 6px;
+  }
+  .detail-parent{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--gold);
+  }
+  .detail-body{padding:22px 26px 26px;}
+  .field{
+    padding:16px 0;
+    border-bottom:1px solid var(--rule);
+    display:grid;
+    grid-template-columns:180px 1fr;
+    gap:18px;
+  }
+  .field:last-child{border-bottom:none;}
+  .field-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+    color:var(--text-mute);
+    padding-top:2px;
+  }
+  .field-value{
+    font-size:15px;
+    line-height:1.6;
+    color:var(--text);
+  }
+  .field-value.sop{white-space:pre-line;}
+
+  @media (max-width:640px){
+    .field{grid-template-columns:1fr;gap:4px;}
+    .field-label{padding-top:0;}
+  }
+
+  .empty{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--text-mute);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+  }
+
+  footer{
+    margin-top:50px;
+    padding-top:16px;
+    border-top:1px solid var(--rule);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--text-mute);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <div>
+      <h1 class="masthead-title">GST Compliance Register</h1>
+      <div class="masthead-sub">Filing heads · SOPs · Due dates · Ownership</div>
+    </div>
+    <div class="masthead-meta" id="meta"></div>
+  </div>
+
+  <div class="crumbs" id="crumbs"></div>
+
+  <input type="text" class="search" id="search" placeholder="Search by head, subhead, team, or keyword…">
+
+  <div id="content"></div>
+
+  <footer>
+    <span>Data sourced from data.json</span>
+    <span id="foot-count"></span>
+  </footer>
+</div>
+
+<script>
+const state = { header: null, subheader: null, query: "" };
+let ALL = [];
+
+function freqClass(freq){
+  const f = (freq||"").toLowerCase();
+  if(f.includes("month")) return "monthly";
+  if(f.includes("quarter")) return "quarterly";
+  if(f.includes("annual") || f.includes("year")) return "annual";
+  if(f.includes("day")) return "daily";
+  return "other";
+}
+
+function esc(s){
+  return (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function load(){
+  try{
+    const res = await fetch('data.json', {cache:'no-store'});
+    const json = await res.json();
+    ALL = json.items || [];
+    document.getElementById('meta').textContent =
+      `Records: ${ALL.length}` + (json.generatedAt ? ` · Updated ${json.generatedAt.slice(0,10)}` : '');
+    document.getElementById('foot-count').textContent = `${ALL.length} entries loaded`;
+    render();
+  }catch(e){
+    document.getElementById('content').innerHTML =
+      `<div class="empty">Could not load data.json.<br>Make sure it sits alongside index.html.</div>`;
+    console.error(e);
+  }
+}
+
+function filtered(){
+  if(!state.query) return ALL;
+  const q = state.query.toLowerCase();
+  return ALL.filter(r =>
+    Object.values(r).some(v => (v||"").toString().toLowerCase().includes(q))
+  );
+}
+
+function renderCrumbs(){
+  const c = document.getElementById('crumbs');
+  let html = `<button onclick="goHome()">All Heads</button>`;
+  if(state.header){
+    html += `<span class="sep">/</span>`;
+    html += state.subheader
+      ? `<button onclick="goHeader('${esc(state.header)}')">${esc(state.header)}</button>`
+      : `<span class="current">${esc(state.header)}</span>`;
+  }
+  if(state.subheader){
+    html += `<span class="sep">/</span><span class="current">${esc(state.subheader)}</span>`;
+  }
+  c.innerHTML = html;
+}
+
+function render(){
+  renderCrumbs();
+  const data = filtered();
+  const el = document.getElementById('content');
+
+  if(state.query){
+    // search mode: flat list of matching subheads regardless of level
+    if(!data.length){
+      el.innerHTML = `<div class="empty">No entries match “${esc(state.query)}”.</div>`;
+      return;
+    }
+    el.innerHTML = `<div class="sub-list">` + data.map(r => `
+      <div class="sub-row" tabindex="0" onclick="openDetail('${esc(r.header)}','${esc(r.subheader)}')">
+        <div>
+          <div class="sub-row-title">${esc(r.header)} — ${esc(r.subheader)}</div>
+          <div class="sub-row-meta">${esc(r.responsibleTeam)} · Due ${esc(r.dueDate)}</div>
+        </div>
+        <span class="stamp ${freqClass(r.frequency)}">${esc(r.frequency)}</span>
+      </div>`).join('') + `</div>`;
+    return;
+  }
+
+  if(state.subheader){
+    const rec = ALL.find(r => r.header === state.header && r.subheader === state.subheader);
+    if(!rec){ el.innerHTML = `<div class="empty">Record not found.</div>`; return; }
+    el.innerHTML = `
+      <div class="detail">
+        <div class="detail-head">
+          <div>
+            <div class="detail-parent">${esc(rec.header)}</div>
+            <h2 class="detail-title">${esc(rec.subheader)}</h2>
+          </div>
+          <span class="stamp ${freqClass(rec.frequency)}">${esc(rec.frequency)}</span>
+        </div>
+        <div class="detail-body">
+          <div class="field"><div class="field-label">SOP</div><div class="field-value sop">${esc(rec.sop)}</div></div>
+          <div class="field"><div class="field-label">Due Date</div><div class="field-value">${esc(rec.dueDate)}</div></div>
+          <div class="field"><div class="field-label">Responsible Team</div><div class="field-value">${esc(rec.responsibleTeam)}</div></div>
+          <div class="field"><div class="field-label">Frequency</div><div class="field-value">${esc(rec.frequency)}</div></div>
+          <div class="field"><div class="field-label">Head of Control</div><div class="field-value">${esc(rec.headOfControl)}</div></div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if(state.header){
+    const rows = ALL.filter(r => r.header === state.header);
+    el.innerHTML = `<div class="sub-list">` + rows.map(r => `
+      <div class="sub-row" tabindex="0" onclick="openDetail('${esc(r.header)}','${esc(r.subheader)}')">
+        <div>
+          <div class="sub-row-title">${esc(r.subheader)}</div>
+          <div class="sub-row-meta">${esc(r.responsibleTeam)} · Due ${esc(r.dueDate)}</div>
+        </div>
+        <span class="stamp ${freqClass(r.frequency)}">${esc(r.frequency)}</span>
+      </div>`).join('') + `</div>`;
+    return;
+  }
+
+  // top level: header cards
+  const headers = [...new Set(ALL.map(r => r.header))];
+  el.innerHTML = `<div class="grid">` + headers.map(h => {
+    const count = ALL.filter(r => r.header === h).length;
+    return `
+      <div class="card" tabindex="0" onclick="goHeader('${esc(h)}')">
+        <div class="card-eyebrow">Filing Head</div>
+        <h3 class="card-title">${esc(h)}</h3>
+        <div class="card-count">${count} subhead${count!==1?'s':''}</div>
+      </div>`;
+  }).join('') + `</div>`;
+}
+
+function goHome(){ state.header=null; state.subheader=null; state.query=""; document.getElementById('search').value=""; render(); }
+function goHeader(h){ state.header=h; state.subheader=null; render(); }
+function openDetail(h, s){ state.header=h; state.subheader=s; render(); }
+
+document.getElementById('search').addEventListener('input', e => {
+  state.query = e.target.value.trim();
+  if(state.query){ state.header=null; state.subheader=null; }
+  render();
+});
+
+load();
+</script>
+</body>
+</html>

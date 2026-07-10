@@ -1,0 +1,114 @@
+{
+  "generatedAt": "2026-07-10T17:20:20.319820Z",
+  "count": 12,
+  "items": [
+    {
+      "header": "Sales",
+      "subheader": "GSTR-1",
+      "sop": "Compile B2B & B2C invoice-wise sales data from ERP; validate HSN summary; upload on GST portal; review draft before filing.",
+      "dueDate": "11th of next month",
+      "responsibleTeam": "Sales Compliance Team",
+      "frequency": "Monthly",
+      "headOfControl": "Tax Manager"
+    },
+    {
+      "header": "Sales",
+      "subheader": "GSTR-3B",
+      "sop": "Reconcile GSTR-1 with books; compute tax liability; set off ITC; pay net tax via challan; file summary return.",
+      "dueDate": "20th of next month",
+      "responsibleTeam": "Finance & Tax Team",
+      "frequency": "Monthly",
+      "headOfControl": "Chief Financial Officer"
+    },
+    {
+      "header": "Sales",
+      "subheader": "E-Invoice Compliance",
+      "sop": "Generate IRN for all applicable B2B invoices in real time via IRP before dispatch/delivery.",
+      "dueDate": "Same day as invoice",
+      "responsibleTeam": "Sales Operations Team",
+      "frequency": "Daily",
+      "headOfControl": "Tax Manager"
+    },
+    {
+      "header": "Purchase",
+      "subheader": "GSTR-2B Reconciliation",
+      "sop": "Download auto-drafted ITC statement; match with purchase register; flag mismatches with vendors.",
+      "dueDate": "14th of next month",
+      "responsibleTeam": "Accounts Payable Team",
+      "frequency": "Monthly",
+      "headOfControl": "Tax Manager"
+    },
+    {
+      "header": "Purchase",
+      "subheader": "ITC Claim & Reversal",
+      "sop": "Claim eligible ITC as per matched GSTR-2B; reverse ineligible/blocked credit under Rule 42/43.",
+      "dueDate": "20th of next month",
+      "responsibleTeam": "Finance & Tax Team",
+      "frequency": "Monthly",
+      "headOfControl": "Chief Financial Officer"
+    },
+    {
+      "header": "Purchase",
+      "subheader": "Vendor Compliance Check",
+      "sop": "Verify vendor GSTIN status and filing history before onboarding and periodically thereafter.",
+      "dueDate": "Before onboarding; Quarterly review",
+      "responsibleTeam": "Procurement Team",
+      "frequency": "Quarterly",
+      "headOfControl": "Head of Procurement"
+    },
+    {
+      "header": "Other Services",
+      "subheader": "GSTR-9 Annual Return",
+      "sop": "Consolidate all monthly/quarterly returns for the FY; prepare annual summary; reconcile with audited books.",
+      "dueDate": "31st December (following FY)",
+      "responsibleTeam": "Finance & Tax Team",
+      "frequency": "Annual",
+      "headOfControl": "Chief Financial Officer"
+    },
+    {
+      "header": "Other Services",
+      "subheader": "GSTR-9C Reconciliation Statement",
+      "sop": "Prepare reconciliation between annual return and audited financials; obtain certification where applicable.",
+      "dueDate": "31st December (following FY)",
+      "responsibleTeam": "Statutory Auditor & Tax Team",
+      "frequency": "Annual",
+      "headOfControl": "Chief Financial Officer"
+    },
+    {
+      "header": "Other Services",
+      "subheader": "TDS/TCS under GST",
+      "sop": "Deduct/collect TDS or TCS where applicable; file GSTR-7/GSTR-8; issue certificates to deductees.",
+      "dueDate": "10th of next month",
+      "responsibleTeam": "Finance & Tax Team",
+      "frequency": "Monthly",
+      "headOfControl": "Tax Manager"
+    },
+    {
+      "header": "Other Services",
+      "subheader": "GST Audit & Notices",
+      "sop": "Respond to departmental notices/audit queries within stipulated time; maintain documentation trail.",
+      "dueDate": "As per notice timeline",
+      "responsibleTeam": "Tax & Legal Team",
+      "frequency": "As needed",
+      "headOfControl": "Chief Financial Officer"
+    },
+    {
+      "header": "Refunds",
+      "subheader": "Export/Inverted Duty Refund",
+      "sop": "Prepare and file refund application (RFD-01) with supporting documents; track processing status.",
+      "dueDate": "Within 2 years of relevant date",
+      "responsibleTeam": "Finance & Tax Team",
+      "frequency": "As applicable",
+      "headOfControl": "Tax Manager"
+    },
+    {
+      "header": "Refunds",
+      "subheader": "Refund Follow-up",
+      "sop": "Track ARN status on portal; respond to deficiency memos; follow up with jurisdictional officer.",
+      "dueDate": "Ongoing until sanction",
+      "responsibleTeam": "Finance & Tax Team",
+      "frequency": "As applicable",
+      "headOfControl": "Tax Manager"
+    }
+  ]
+}
