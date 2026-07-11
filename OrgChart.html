@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organisation Chart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A; --ink-soft:#33456e; --paper:#F7F5EF; --paper-raised:#FFFFFF;
+    --rule:#D8D2C2; --gold:#B98A1E; --gold-soft:#F3E6C6;
+    --green:#3E6B4F; --green-soft:#E4EEE6; --red:#8C3B2E; --red-soft:#F3E3DF;
+    --text:#241F16; --text-mute:#6B6555;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--text);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1200px;margin:0 auto;padding:28px 20px 90px;}
+
+  .masthead{border-bottom:3px solid var(--ink);padding-bottom:16px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;}
+  .masthead-title{font-family:'Source Serif 4',serif;font-weight:700;font-size:clamp(26px,4vw,36px);color:var(--ink);margin:0;}
+  .masthead-sub{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-mute);margin-top:6px;}
+  .masthead-meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mute);text-align:right;}
+
+  .toolbar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+  .search{flex:1;min-width:200px;padding:11px 14px;font-size:14px;border:1.5px solid var(--rule);background:var(--paper-raised);border-radius:2px;color:var(--text);}
+  .search:focus{outline:none;border-color:var(--ink);}
+  .btn{padding:10px 14px;font-size:12.5px;font-family:'IBM Plex Mono',monospace;letter-spacing:.03em;background:var(--paper-raised);border:1.5px solid var(--rule);cursor:pointer;color:var(--ink-soft);white-space:nowrap;}
+  .btn:hover{border-color:var(--ink);color:var(--ink);}
+
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:22px;font-size:12px;color:var(--text-mute);align-items:center;}
+  .legend-item{display:flex;align-items:center;gap:6px;}
+  .legend-line{width:22px;height:0;border-top:2px solid var(--ink);}
+  .legend-line.dotted{border-top:2px dashed var(--gold);}
+
+  /* Tree */
+  .tree{overflow-x:auto;padding-bottom:10px;}
+  ul.tree-root, .tree ul{list-style:none;margin:0;padding-left:28px;position:relative;}
+  .tree ul{padding-top:6px;}
+  .tree > ul.tree-root{padding-left:0;}
+  .tree li{position:relative;padding-left:0;margin-bottom:6px;}
+  .tree ul li{padding-left:26px;}
+  .tree ul li::before{
+    content:"";position:absolute;top:0;left:0;bottom:14px;width:1px;
+    border-left:2px solid var(--rule);
+  }
+  .tree ul li:last-child::before{bottom:auto;height:16px;}
+  .tree ul li::after{
+    content:"";position:absolute;top:16px;left:0;width:18px;height:0;
+    border-top:2px solid var(--rule);
+  }
+
+  .node{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--paper-raised);border:1.5px solid var(--rule);border-left:4px solid var(--ink);
+    padding:9px 14px;cursor:pointer;transition:box-shadow .12s ease, border-color .12s ease;
+    max-width:340px;
+  }
+  .node:hover{box-shadow:0 4px 12px rgba(27,42,74,0.12);border-left-color:var(--gold);}
+  .node.top{border-left-color:var(--gold);}
+  .node-name{font-family:'Source Serif 4',serif;font-weight:600;font-size:15px;color:var(--ink);line-height:1.25;}
+  .node-desig{font-size:11.5px;color:var(--text-mute);margin-top:1px;}
+  .node-dept{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);margin-top:2px;}
+  .dotted-badge{
+    font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--gold);
+    border:1px dashed var(--gold);border-radius:20px;padding:2px 7px;white-space:nowrap;
+  }
+  .toggle{font-size:12px;color:var(--text-mute);width:16px;text-align:center;flex-shrink:0;}
+  .leaf-dot{width:6px;height:6px;border-radius:50%;background:var(--rule);flex-shrink:0;}
+  .collapsed > ul{display:none;}
+
+  .empty{text-align:center;padding:60px 20px;color:var(--text-mute);font-family:'IBM Plex Mono',monospace;font-size:13px;}
+
+  /* Detail panel (slide-over) */
+  .overlay{position:fixed;inset:0;background:rgba(27,42,74,0.35);display:none;z-index:40;}
+  .overlay.show{display:block;}
+  .panel{
+    position:fixed;top:0;right:0;height:100%;width:min(440px,92vw);
+    background:var(--paper-raised);z-index:41;box-shadow:-8px 0 24px rgba(0,0,0,0.15);
+    transform:translateX(100%);transition:transform .2s ease;overflow-y:auto;
+  }
+  .panel.show{transform:translateX(0);}
+  .panel-head{padding:22px 24px 16px;border-bottom:1.5px dashed var(--rule);position:relative;}
+  .panel-close{position:absolute;top:18px;right:20px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-mute);}
+  .panel-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);}
+  .panel-title{font-family:'Source Serif 4',serif;font-weight:700;font-size:23px;color:var(--ink);margin:6px 0 2px;}
+  .panel-sub{font-size:13px;color:var(--text-mute);}
+  .panel-body{padding:18px 24px 30px;}
+  .field{padding:13px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:130px 1fr;gap:14px;}
+  .field:last-child{border-bottom:none;}
+  .field-label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-mute);}
+  .field-value{font-size:14px;line-height:1.55;color:var(--text);}
+  .field-value a{color:var(--ink-soft);cursor:pointer;}
+  .stamp{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:20px;border:1px solid currentColor;display:inline-block;}
+  .stamp.active{color:var(--green);background:var(--green-soft);}
+  .stamp.leave{color:var(--gold);background:var(--gold-soft);}
+  .stamp.out{color:var(--red);background:var(--red-soft);}
+
+  .hist-title{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-mute);margin:22px 0 10px;}
+  .hist-item{border:1px solid var(--rule);border-left:3px solid var(--gold);padding:10px 12px;margin-bottom:8px;font-size:12.5px;}
+  .hist-type{font-weight:600;color:var(--ink);font-size:12.5px;}
+  .hist-date{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-mute);float:right;}
+  .hist-change{color:var(--text-mute);margin-top:4px;}
+  .hist-remarks{margin-top:4px;font-style:italic;color:var(--text-mute);}
+
+  @media (max-width:640px){
+    .field{grid-template-columns:1fr;gap:3px;}
+  }
+
+  footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--rule);font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mute);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <div>
+      <h1 class="masthead-title">Organisation Chart</h1>
+      <div class="masthead-sub">Reporting structure · Roles · Transfer &amp; promotion history</div>
+    </div>
+    <div class="masthead-meta" id="meta"></div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" class="search" id="search" placeholder="Search by name, designation or department…">
+    <button class="btn" id="expandAll">Expand all</button>
+    <button class="btn" id="collapseAll">Collapse all</button>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><span class="legend-line"></span> Direct report (solid)</div>
+    <div class="legend-item"><span class="legend-line dotted"></span> Additional / dotted-line report</div>
+    <div class="legend-item">Click any person for full detail &amp; history →</div>
+  </div>
+
+  <div id="content"></div>
+
+  <footer>
+    <span>Data sourced from orgchart.json</span>
+    <span id="foot-count"></span>
+  </footer>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="panel" id="panel"></div>
+
+<script>
+let EMP = [], HIST = [];
+let byId = {};
+
+function esc(s){ return (s||"").toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+async function load(){
+  try{
+    const res = await fetch('orgchart.json', {cache:'no-store'});
+    const json = await res.json();
+    EMP = json.employees || [];
+    HIST = json.history || [];
+    byId = {};
+    EMP.forEach(e => byId[e.employeeId] = e);
+    document.getElementById('meta').textContent = `Headcount: ${EMP.length}` + (json.generatedAt ? ` · Updated ${json.generatedAt}` : '');
+    document.getElementById('foot-count').textContent = `${EMP.length} employees · ${HIST.length} history entries`;
+    renderTree(EMP);
+  }catch(e){
+    document.getElementById('content').innerHTML = `<div class="empty">Could not load orgchart.json.<br>Make sure it sits alongside OrgChart.html.</div>`;
+    console.error(e);
+  }
+}
+
+function children(id){ return EMP.filter(e => e.reportsTo === id); }
+function roots(list){ return list.filter(e => !e.reportsTo || !byId[e.reportsTo]); }
+
+function dottedBadge(e){
+  const names = [e.additionalReportTo1, e.additionalReportTo2]
+    .filter(id => id && byId[id])
+    .map(id => byId[id].name);
+  if(!names.length) return '';
+  return `<span class="dotted-badge" title="Dotted-line to: ${esc(names.join(', '))}">⌁ ${names.length}</span>`;
+}
+
+function nodeHtml(e, isTop){
+  const kids = children(e.employeeId);
+  return `
+    <div class="node ${isTop?'top':''}" onclick="openDetail('${e.employeeId}', event)">
+      ${kids.length ? '<span class="toggle">▾</span>' : '<span class="leaf-dot"></span>'}
+      <div>
+        <div class="node-name">${esc(e.name)}</div>
+        <div class="node-desig">${esc(e.designation)}</div>
+        <span class="node-dept">${esc(e.department)}</span>
+      </div>
+      ${dottedBadge(e)}
+    </div>`;
+}
+
+function buildBranch(e, isTop){
+  const kids = children(e.employeeId);
+  let html = `<li>${nodeHtml(e, isTop)}`;
+  if(kids.length){
+    html += `<ul>` + kids.map(k => buildBranch(k, false)).join('') + `</ul>`;
+  }
+  html += `</li>`;
+  return html;
+}
+
+function renderTree(list){
+  const el = document.getElementById('content');
+  const top = roots(list);
+  if(!top.length){
+    el.innerHTML = `<div class="empty">No matches.</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="tree"><ul class="tree-root">` +
+    top.map(r => buildBranch(r, true)).join('') + `</ul></div>`;
+
+  // toggle collapse on clicking the caret specifically
+  el.querySelectorAll('.toggle').forEach(t => {
+    t.addEventListener('click', ev => {
+      ev.stopPropagation();
+      const li = t.closest('li');
+      li.classList.toggle('collapsed');
+      t.textContent = li.classList.contains('collapsed') ? '▸' : '▾';
+    });
+  });
+}
+
+function freqLabel(status){
+  const s=(status||'').toLowerCase();
+  if(s.includes('active')) return 'active';
+  if(s.includes('leave')) return 'leave';
+  return 'out';
+}
+
+function openDetail(id, ev){
+  if(ev) ev.stopPropagation();
+  const e = byId[id];
+  if(!e) return;
+  const manager = byId[e.reportsTo];
+  const addl = [e.additionalReportTo1, e.additionalReportTo2].filter(x=>x && byId[x]).map(x=>byId[x]);
+  const reports = children(id);
+  const hist = HIST.filter(h => h.employeeId === id).slice().reverse();
+
+  const panel = document.getElementById('panel');
+  panel.innerHTML = `
+    <div class="panel-head">
+      <button class="panel-close" onclick="closePanel()">✕</button>
+      <div class="panel-eyebrow">${esc(e.department)}</div>
+      <div class="panel-title">${esc(e.name)}</div>
+      <div class="panel-sub">${esc(e.designation)}</div>
+    </div>
+    <div class="panel-body">
+      <div class="field"><div class="field-label">Status</div><div class="field-value"><span class="stamp ${freqLabel(e.status)}">${esc(e.status)}</span></div></div>
+      <div class="field"><div class="field-label">Reports To</div><div class="field-value">${manager ? `<a onclick="openDetail('${manager.employeeId}')">${esc(manager.name)} — ${esc(manager.designation)}</a>` : '— (Top of organisation)'}</div></div>
+      ${addl.length ? `<div class="field"><div class="field-label">Also reports to<br>(dotted line)</div><div class="field-value">${addl.map(a=>`<a onclick="openDetail('${a.employeeId}')">${esc(a.name)} — ${esc(a.designation)}</a>`).join('<br>')}</div></div>` : ''}
+      <div class="field"><div class="field-label">Direct reports</div><div class="field-value">${reports.length ? reports.map(r=>`<a onclick="openDetail('${r.employeeId}')">${esc(r.name)}</a>`).join(', ') : '— None'}</div></div>
+      <div class="field"><div class="field-label">Roles &amp;<br>Responsibilities</div><div class="field-value">${esc(e.roles)}</div></div>
+      <div class="field"><div class="field-label">Location</div><div class="field-value">${esc(e.location)}</div></div>
+      <div class="field"><div class="field-label">Date of Joining</div><div class="field-value">${esc(e.doj)}</div></div>
+      ${hist.length ? `
+        <div class="hist-title">Change History (${hist.length})</div>
+        ${hist.map(h => `
+          <div class="hist-item">
+            <span class="hist-date">${esc(h.effectiveDate)}</span>
+            <div class="hist-type">${esc(h.changeType)}</div>
+            <div class="hist-change">${esc(h.oldValue)} → ${esc(h.newValue)}</div>
+            ${h.remarks ? `<div class="hist-remarks">${esc(h.remarks)}</div>` : ''}
+          </div>`).join('')}
+      ` : ''}
+    </div>`;
+
+  document.getElementById('overlay').classList.add('show');
+  panel.classList.add('show');
+}
+
+function closePanel(){
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('panel').classList.remove('show');
+}
+document.getElementById('overlay').addEventListener('click', closePanel);
+
+document.getElementById('search').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase();
+  if(!q){ renderTree(EMP); return; }
+  const matches = EMP.filter(r =>
+    (r.name||'').toLowerCase().includes(q) ||
+    (r.designation||'').toLowerCase().includes(q) ||
+    (r.department||'').toLowerCase().includes(q)
+  );
+  // include ancestors so matched nodes remain connected to the tree
+  const idsToShow = new Set();
+  matches.forEach(m => {
+    let cur = m;
+    while(cur){ idsToShow.add(cur.employeeId); cur = byId[cur.reportsTo]; }
+  });
+  renderTree(EMP.filter(e => idsToShow.has(e.employeeId)));
+});
+
+document.getElementById('expandAll').addEventListener('click', () => {
+  document.querySelectorAll('.tree li.collapsed').forEach(li => {
+    li.classList.remove('collapsed');
+    const t = li.querySelector('.toggle');
+    if(t) t.textContent = '▾';
+  });
+});
+document.getElementById('collapseAll').addEventListener('click', () => {
+  document.querySelectorAll('.tree ul li').forEach(li => {
+    if(li.querySelector('ul')){
+      li.classList.add('collapsed');
+      const t = li.querySelector('.toggle');
+      if(t) t.textContent = '▸';
+    }
+  });
+});
+
+load();
+</script>
+</body>
+</html>
