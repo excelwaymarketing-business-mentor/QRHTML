@@ -9,122 +9,166 @@
 <style>
   :root{
     --ink:#1B2A4A; --ink-soft:#33456e; --paper:#F7F5EF; --paper-raised:#FFFFFF;
-    --rule:#D8D2C2; --gold:#B98A1E; --gold-soft:#F3E6C6;
+    --rule:#DDD7C6; --gold:#B98A1E; --gold-soft:#F3E6C6;
     --green:#3E6B4F; --green-soft:#E4EEE6; --red:#8C3B2E; --red-soft:#F3E3DF;
-    --text:#241F16; --text-mute:#6B6555;
+    --text:#241F16; --text-mute:#726C5B;
+    --shadow:0 10px 28px rgba(27,42,74,0.10);
   }
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--paper);color:var(--text);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased;}
-  .wrap{max-width:1200px;margin:0 auto;padding:28px 20px 90px;}
+  body{
+    margin:0;color:var(--text);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1200px 500px at 15% -10%, rgba(185,138,30,0.07), transparent 60%),
+      radial-gradient(1000px 600px at 100% 0%, rgba(27,42,74,0.05), transparent 55%),
+      var(--paper);
+    min-height:100vh;
+  }
+  .wrap{max-width:1220px;margin:0 auto;padding:30px 20px 90px;}
 
-  .masthead{border-bottom:3px solid var(--ink);padding-bottom:16px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;}
-  .masthead-title{font-family:'Source Serif 4',serif;font-weight:700;font-size:clamp(26px,4vw,36px);color:var(--ink);margin:0;}
-  .masthead-sub{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-mute);margin-top:6px;}
-  .masthead-meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mute);text-align:right;}
+  .masthead{
+    display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;
+    padding-bottom:20px;margin-bottom:8px;border-bottom:3px solid var(--ink);
+  }
+  .masthead-left{display:flex;align-items:center;gap:16px;}
+  .logo-box{
+    width:56px;height:56px;border-radius:10px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+    background:var(--ink);box-shadow:var(--shadow);
+  }
+  .logo-box img{width:100%;height:100%;object-fit:contain;background:#fff;}
+  .logo-fallback{font-family:'Source Serif 4',serif;font-weight:700;color:#fff;font-size:20px;letter-spacing:.02em;}
+  .masthead-title{font-family:'Source Serif 4',serif;font-weight:700;font-size:clamp(24px,3.6vw,34px);color:var(--ink);margin:0;line-height:1.1;}
+  .masthead-sub{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-mute);margin-top:5px;}
+  .masthead-meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mute);text-align:right;line-height:1.7;}
+  .gold-rule{height:2px;background:linear-gradient(90deg, var(--gold), transparent 70%);margin-bottom:24px;}
 
-  .toolbar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
-  .search{flex:1;min-width:200px;padding:11px 14px;font-size:14px;border:1.5px solid var(--rule);background:var(--paper-raised);border-radius:2px;color:var(--text);}
-  .search:focus{outline:none;border-color:var(--ink);}
-  .btn{padding:10px 14px;font-size:12.5px;font-family:'IBM Plex Mono',monospace;letter-spacing:.03em;background:var(--paper-raised);border:1.5px solid var(--rule);cursor:pointer;color:var(--ink-soft);white-space:nowrap;}
-  .btn:hover{border-color:var(--ink);color:var(--ink);}
+  .toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+  .search{flex:1;min-width:200px;padding:12px 15px;font-size:14px;border:1.5px solid var(--rule);background:var(--paper-raised);border-radius:6px;color:var(--text);transition:border-color .15s ease, box-shadow .15s ease;}
+  .search:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(27,42,74,0.08);}
+  .btn{padding:11px 15px;font-size:12.5px;font-family:'IBM Plex Mono',monospace;letter-spacing:.03em;background:var(--paper-raised);border:1.5px solid var(--rule);border-radius:6px;cursor:pointer;color:var(--ink-soft);white-space:nowrap;transition:all .15s ease;}
+  .btn:hover{border-color:var(--ink);color:var(--ink);box-shadow:var(--shadow);transform:translateY(-1px);}
+  .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .btn.primary:hover{background:var(--ink-soft);}
 
-  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:22px;font-size:12px;color:var(--text-mute);align-items:center;}
+  .dept-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;}
+  .chip{
+    display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:20px;
+    font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid transparent;
+    background:var(--paper-raised);color:var(--text-mute);transition:all .15s ease;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  }
+  .chip:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
+  .chip .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .chip.active{border-color:currentColor;font-weight:600;}
+  .chip .count{font-family:'IBM Plex Mono',monospace;font-size:10.5px;opacity:.75;}
+
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;font-size:11.5px;color:var(--text-mute);align-items:center;}
   .legend-item{display:flex;align-items:center;gap:6px;}
-  .legend-line{width:22px;height:0;border-top:2px solid var(--ink);}
+  .legend-line{width:20px;height:0;border-top:2px solid var(--ink);}
   .legend-line.dotted{border-top:2px dashed var(--gold);}
 
-  /* Tree */
-  .tree{overflow-x:auto;padding-bottom:10px;}
-  ul.tree-root, .tree ul{list-style:none;margin:0;padding-left:28px;position:relative;}
-  .tree ul{padding-top:6px;}
+  .tree{overflow-x:auto;padding:6px 4px 14px;}
+  ul.tree-root, .tree ul{list-style:none;margin:0;padding-left:30px;position:relative;}
+  .tree ul{padding-top:8px;}
   .tree > ul.tree-root{padding-left:0;}
-  .tree li{position:relative;padding-left:0;margin-bottom:6px;}
+  .tree li{position:relative;margin-bottom:8px;}
   .tree ul li{padding-left:26px;}
-  .tree ul li::before{
-    content:"";position:absolute;top:0;left:0;bottom:14px;width:1px;
-    border-left:2px solid var(--rule);
-  }
-  .tree ul li:last-child::before{bottom:auto;height:16px;}
-  .tree ul li::after{
-    content:"";position:absolute;top:16px;left:0;width:18px;height:0;
-    border-top:2px solid var(--rule);
-  }
+  .tree ul li::before{content:"";position:absolute;top:0;left:0;bottom:16px;width:1.5px;background:var(--rule);}
+  .tree ul li:last-child::before{bottom:auto;height:18px;}
+  .tree ul li::after{content:"";position:absolute;top:18px;left:0;width:18px;height:0;border-top:1.5px solid var(--rule);}
 
   .node{
-    display:inline-flex;align-items:center;gap:10px;
-    background:var(--paper-raised);border:1.5px solid var(--rule);border-left:4px solid var(--ink);
-    padding:9px 14px;cursor:pointer;transition:box-shadow .12s ease, border-color .12s ease;
-    max-width:340px;
+    display:inline-flex;align-items:center;gap:11px;
+    background:var(--paper-raised);border:1.5px solid var(--rule);border-left:5px solid var(--ink);
+    border-radius:8px;padding:10px 15px;cursor:pointer;
+    transition:box-shadow .15s ease, transform .12s ease, border-color .15s ease, opacity .15s ease;
+    max-width:350px;
   }
-  .node:hover{box-shadow:0 4px 12px rgba(27,42,74,0.12);border-left-color:var(--gold);}
-  .node.top{border-left-color:var(--gold);}
+  .node:hover{box-shadow:var(--shadow);transform:translateY(-2px);}
+  .node.dimmed{opacity:.28;filter:grayscale(0.4);}
   .node-name{font-family:'Source Serif 4',serif;font-weight:600;font-size:15px;color:var(--ink);line-height:1.25;}
   .node-desig{font-size:11.5px;color:var(--text-mute);margin-top:1px;}
-  .node-dept{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);margin-top:2px;}
-  .dotted-badge{
-    font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--gold);
-    border:1px dashed var(--gold);border-radius:20px;padding:2px 7px;white-space:nowrap;
-  }
-  .toggle{font-size:12px;color:var(--text-mute);width:16px;text-align:center;flex-shrink:0;}
+  .node-dept{display:inline-flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;margin-top:3px;}
+  .node-dept .dot{width:6px;height:6px;border-radius:50%;}
+  .dotted-badge{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--gold);border:1px dashed var(--gold);border-radius:20px;padding:2px 7px;white-space:nowrap;}
+  .toggle{font-size:12px;color:var(--text-mute);width:16px;text-align:center;flex-shrink:0;transition:transform .15s ease;display:inline-block;}
   .leaf-dot{width:6px;height:6px;border-radius:50%;background:var(--rule);flex-shrink:0;}
   .collapsed > ul{display:none;}
 
   .empty{text-align:center;padding:60px 20px;color:var(--text-mute);font-family:'IBM Plex Mono',monospace;font-size:13px;}
 
-  /* Detail panel (slide-over) */
-  .overlay{position:fixed;inset:0;background:rgba(27,42,74,0.35);display:none;z-index:40;}
+  .overlay{position:fixed;inset:0;background:rgba(27,42,74,0.4);backdrop-filter:blur(1px);display:none;z-index:40;}
   .overlay.show{display:block;}
   .panel{
-    position:fixed;top:0;right:0;height:100%;width:min(440px,92vw);
-    background:var(--paper-raised);z-index:41;box-shadow:-8px 0 24px rgba(0,0,0,0.15);
-    transform:translateX(100%);transition:transform .2s ease;overflow-y:auto;
+    position:fixed;top:0;right:0;height:100%;width:min(460px,92vw);
+    background:var(--paper-raised);z-index:41;box-shadow:-10px 0 30px rgba(0,0,0,0.18);
+    transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);overflow-y:auto;
   }
   .panel.show{transform:translateX(0);}
-  .panel-head{padding:22px 24px 16px;border-bottom:1.5px dashed var(--rule);position:relative;}
-  .panel-close{position:absolute;top:18px;right:20px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-mute);}
+  .panel-head{padding:24px 26px 18px;border-bottom:1.5px dashed var(--rule);position:relative;}
+  .panel-close{position:absolute;top:20px;right:22px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-mute);}
+  .panel-close:hover{color:var(--ink);}
   .panel-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);}
-  .panel-title{font-family:'Source Serif 4',serif;font-weight:700;font-size:23px;color:var(--ink);margin:6px 0 2px;}
+  .panel-title{font-family:'Source Serif 4',serif;font-weight:700;font-size:24px;color:var(--ink);margin:6px 0 2px;}
   .panel-sub{font-size:13px;color:var(--text-mute);}
-  .panel-body{padding:18px 24px 30px;}
-  .field{padding:13px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:130px 1fr;gap:14px;}
+  .panel-body{padding:20px 26px 32px;}
+  .field{padding:14px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:130px 1fr;gap:14px;}
   .field:last-child{border-bottom:none;}
   .field-label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-mute);}
   .field-value{font-size:14px;line-height:1.55;color:var(--text);}
-  .field-value a{color:var(--ink-soft);cursor:pointer;}
-  .stamp{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:20px;border:1px solid currentColor;display:inline-block;}
+  .field-value a{color:var(--ink-soft);cursor:pointer;text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:2px;}
+  .field-value a:hover{color:var(--gold);}
+  .stamp{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid currentColor;display:inline-block;}
   .stamp.active{color:var(--green);background:var(--green-soft);}
   .stamp.leave{color:var(--gold);background:var(--gold-soft);}
   .stamp.out{color:var(--red);background:var(--red-soft);}
 
   .hist-title{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-mute);margin:22px 0 10px;}
-  .hist-item{border:1px solid var(--rule);border-left:3px solid var(--gold);padding:10px 12px;margin-bottom:8px;font-size:12.5px;}
+  .hist-item{border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:4px;padding:11px 13px;margin-bottom:9px;font-size:12.5px;}
   .hist-type{font-weight:600;color:var(--ink);font-size:12.5px;}
   .hist-date{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-mute);float:right;}
   .hist-change{color:var(--text-mute);margin-top:4px;}
   .hist-remarks{margin-top:4px;font-style:italic;color:var(--text-mute);}
 
+  .past-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid var(--rule);cursor:pointer;}
+  .past-row:hover .past-name{color:var(--gold);}
+  .past-name{font-family:'Source Serif 4',serif;font-weight:600;font-size:14.5px;color:var(--ink);transition:color .15s ease;}
+  .past-desig{font-size:11.5px;color:var(--text-mute);margin-top:2px;}
+
   @media (max-width:640px){
     .field{grid-template-columns:1fr;gap:3px;}
+    .masthead-meta{text-align:left;}
   }
 
-  footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--rule);font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mute);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--rule);font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mute);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="masthead">
-    <div>
-      <h1 class="masthead-title">Organisation Chart</h1>
-      <div class="masthead-sub">Reporting structure · Roles · Transfer &amp; promotion history</div>
+    <div class="masthead-left">
+      <div class="logo-box" id="logoBox">
+        <img id="logoImg" src="Comp Logo Head.jpg" alt="Company logo"
+             onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='flex';">
+        <div class="logo-fallback" id="logoFallback" style="display:none;">CO</div>
+      </div>
+      <div>
+        <h1 class="masthead-title">Organisation Chart</h1>
+        <div class="masthead-sub">Reporting structure · Roles · Transfer &amp; promotion history</div>
+      </div>
     </div>
     <div class="masthead-meta" id="meta"></div>
   </div>
+  <div class="gold-rule"></div>
 
   <div class="toolbar">
     <input type="text" class="search" id="search" placeholder="Search by name, designation or department…">
     <button class="btn" id="expandAll">Expand all</button>
     <button class="btn" id="collapseAll">Collapse all</button>
+    <button class="btn primary" id="pastBtn">Past Employees</button>
   </div>
+
+  <div class="dept-chips" id="deptChips"></div>
 
   <div class="legend">
     <div class="legend-item"><span class="legend-line"></span> Direct report (solid)</div>
@@ -146,8 +190,22 @@
 <script>
 let EMP = [], HIST = [];
 let byId = {};
+let activeFilterDept = null;
 
-function esc(s){ return (s||"").toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+const DEPT_PALETTE = ["#1B2A4A", "#B98A1E", "#3E6B4F", "#8C3B2E", "#5C4B8A", "#2E7D8C", "#A15C2E", "#4A5568"];
+let deptColorMap = {};
+
+function esc(s){
+  const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+  return (s||"").toString().replace(/[&<>"']/g, c => map[c]);
+}
+function deptColor(dept){
+  if(!deptColorMap[dept]){
+    const idx = Object.keys(deptColorMap).length % DEPT_PALETTE.length;
+    deptColorMap[dept] = DEPT_PALETTE[idx];
+  }
+  return deptColorMap[dept];
+}
 
 async function load(){
   try{
@@ -157,17 +215,42 @@ async function load(){
     HIST = json.history || [];
     byId = {};
     EMP.forEach(e => byId[e.employeeId] = e);
-    document.getElementById('meta').textContent = `Headcount: ${EMP.length}` + (json.generatedAt ? ` · Updated ${json.generatedAt}` : '');
-    document.getElementById('foot-count').textContent = `${EMP.length} employees · ${HIST.length} history entries`;
-    renderTree(EMP);
+    const activeCount = activeEmployees().length;
+    document.getElementById('meta').textContent = `Active headcount: ${activeCount}` + (json.generatedAt ? ` · Updated ${json.generatedAt}` : '');
+    document.getElementById('foot-count').textContent = `${EMP.length} total records · ${HIST.length} history entries`;
+    buildDeptChips();
+    renderTree();
   }catch(e){
     document.getElementById('content').innerHTML = `<div class="empty">Could not load orgchart.json.<br>Make sure it sits alongside OrgChart.html.</div>`;
     console.error(e);
   }
 }
 
-function children(id){ return EMP.filter(e => e.reportsTo === id); }
-function roots(list){ return list.filter(e => !e.reportsTo || !byId[e.reportsTo]); }
+function activeEmployees(){ return EMP.filter(e => (e.status||'').toLowerCase()==='active'); }
+
+function buildDeptChips(){
+  const depts = [...new Set(activeEmployees().map(e => e.department))];
+  const el = document.getElementById('deptChips');
+  el.innerHTML = depts.map(d => {
+    const c = deptColor(d);
+    const count = activeEmployees().filter(e => e.department===d).length;
+    return `<div class="chip" data-dept="${esc(d)}" style="color:${c}" onclick="toggleDeptFilter('${esc(d)}')">
+      <span class="dot" style="background:${c}"></span>${esc(d)} <span class="count">${count}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleDeptFilter(d){
+  activeFilterDept = (activeFilterDept === d) ? null : d;
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.dept===activeFilterDept));
+  renderTree();
+}
+
+function children(id, pool){ return pool.filter(e => e.reportsTo === id); }
+function roots(pool){
+  const ids = new Set(pool.map(e=>e.employeeId));
+  return pool.filter(e => !e.reportsTo || !ids.has(e.reportsTo));
+}
 
 function dottedBadge(e){
   const names = [e.additionalReportTo1, e.additionalReportTo2]
@@ -177,49 +260,74 @@ function dottedBadge(e){
   return `<span class="dotted-badge" title="Dotted-line to: ${esc(names.join(', '))}">⌁ ${names.length}</span>`;
 }
 
-function nodeHtml(e, isTop){
-  const kids = children(e.employeeId);
+function nodeHtml(e, pool){
+  const kids = children(e.employeeId, pool);
+  const dim = activeFilterDept && e.department !== activeFilterDept;
+  const c = deptColor(e.department);
   return `
-    <div class="node ${isTop?'top':''}" onclick="openDetail('${e.employeeId}', event)">
+    <div class="node ${dim?'dimmed':''}" style="border-left-color:${c}" onclick="openDetail('${e.employeeId}', event)">
       ${kids.length ? '<span class="toggle">▾</span>' : '<span class="leaf-dot"></span>'}
       <div>
         <div class="node-name">${esc(e.name)}</div>
         <div class="node-desig">${esc(e.designation)}</div>
-        <span class="node-dept">${esc(e.department)}</span>
+        <span class="node-dept" style="color:${c}"><span class="dot" style="background:${c}"></span>${esc(e.department)}</span>
       </div>
       ${dottedBadge(e)}
     </div>`;
 }
 
-function buildBranch(e, isTop){
-  const kids = children(e.employeeId);
-  let html = `<li>${nodeHtml(e, isTop)}`;
+function buildBranch(e, pool){
+  const kids = children(e.employeeId, pool);
+  let html = `<li>${nodeHtml(e, pool)}`;
   if(kids.length){
-    html += `<ul>` + kids.map(k => buildBranch(k, false)).join('') + `</ul>`;
+    html += `<ul>` + kids.map(k => buildBranch(k, pool)).join('') + `</ul>`;
   }
   html += `</li>`;
   return html;
 }
 
-function renderTree(list){
+function renderTree(){
   const el = document.getElementById('content');
-  const top = roots(list);
+  const pool = activeEmployees();
+  const top = roots(pool);
   if(!top.length){
-    el.innerHTML = `<div class="empty">No matches.</div>`;
+    el.innerHTML = `<div class="empty">No active employees found.</div>`;
     return;
   }
   el.innerHTML = `<div class="tree"><ul class="tree-root">` +
-    top.map(r => buildBranch(r, true)).join('') + `</ul></div>`;
+    top.map(r => buildBranch(r, pool)).join('') + `</ul></div>`;
 
-  // toggle collapse on clicking the caret specifically
   el.querySelectorAll('.toggle').forEach(t => {
     t.addEventListener('click', ev => {
       ev.stopPropagation();
       const li = t.closest('li');
       li.classList.toggle('collapsed');
-      t.textContent = li.classList.contains('collapsed') ? '▸' : '▾';
+      t.style.transform = li.classList.contains('collapsed') ? 'rotate(-90deg)' : 'rotate(0deg)';
     });
   });
+}
+
+function searchFilter(q){
+  q = q.trim().toLowerCase();
+  const el = document.getElementById('content');
+  const pool = activeEmployees();
+  if(!q){ renderTree(); return; }
+  const matches = pool.filter(r =>
+    (r.name||'').toLowerCase().includes(q) ||
+    (r.designation||'').toLowerCase().includes(q) ||
+    (r.department||'').toLowerCase().includes(q)
+  );
+  if(!matches.length){ el.innerHTML = `<div class="empty">No matches.</div>`; return; }
+  const byIdActive = {}; pool.forEach(e=>byIdActive[e.employeeId]=e);
+  const idsToShow = new Set();
+  matches.forEach(m => {
+    let cur = m;
+    while(cur){ idsToShow.add(cur.employeeId); cur = byIdActive[cur.reportsTo]; }
+  });
+  const filteredPool = pool.filter(e => idsToShow.has(e.employeeId));
+  const top = roots(filteredPool);
+  el.innerHTML = `<div class="tree"><ul class="tree-root">` +
+    top.map(r => buildBranch(r, filteredPool)).join('') + `</ul></div>`;
 }
 
 function freqLabel(status){
@@ -235,7 +343,7 @@ function openDetail(id, ev){
   if(!e) return;
   const manager = byId[e.reportsTo];
   const addl = [e.additionalReportTo1, e.additionalReportTo2].filter(x=>x && byId[x]).map(x=>byId[x]);
-  const reports = children(id);
+  const reports = EMP.filter(x => x.reportsTo === id);
   const hist = HIST.filter(h => h.employeeId === id).slice().reverse();
 
   const panel = document.getElementById('panel');
@@ -270,34 +378,44 @@ function openDetail(id, ev){
   panel.classList.add('show');
 }
 
+function openPastEmployees(){
+  const past = EMP.filter(e => (e.status||'').toLowerCase() !== 'active');
+  const panel = document.getElementById('panel');
+  panel.innerHTML = `
+    <div class="panel-head">
+      <button class="panel-close" onclick="closePanel()">✕</button>
+      <div class="panel-eyebrow">Not currently active</div>
+      <div class="panel-title">Past Employees</div>
+      <div class="panel-sub">${past.length} record${past.length!==1?'s':''} — resigned, transferred out, or on leave</div>
+    </div>
+    <div class="panel-body">
+      ${past.length ? past.map(e => `
+        <div class="past-row" onclick="openDetail('${e.employeeId}')">
+          <div>
+            <div class="past-name">${esc(e.name)}</div>
+            <div class="past-desig">${esc(e.designation)} · ${esc(e.department)}</div>
+          </div>
+          <span class="stamp ${freqLabel(e.status)}">${esc(e.status)}</span>
+        </div>`).join('') : `<div class="empty">No past employee records yet.</div>`}
+    </div>`;
+  document.getElementById('overlay').classList.add('show');
+  panel.classList.add('show');
+}
+
 function closePanel(){
   document.getElementById('overlay').classList.remove('show');
   document.getElementById('panel').classList.remove('show');
 }
 document.getElementById('overlay').addEventListener('click', closePanel);
+document.getElementById('pastBtn').addEventListener('click', openPastEmployees);
 
-document.getElementById('search').addEventListener('input', e => {
-  const q = e.target.value.trim().toLowerCase();
-  if(!q){ renderTree(EMP); return; }
-  const matches = EMP.filter(r =>
-    (r.name||'').toLowerCase().includes(q) ||
-    (r.designation||'').toLowerCase().includes(q) ||
-    (r.department||'').toLowerCase().includes(q)
-  );
-  // include ancestors so matched nodes remain connected to the tree
-  const idsToShow = new Set();
-  matches.forEach(m => {
-    let cur = m;
-    while(cur){ idsToShow.add(cur.employeeId); cur = byId[cur.reportsTo]; }
-  });
-  renderTree(EMP.filter(e => idsToShow.has(e.employeeId)));
-});
+document.getElementById('search').addEventListener('input', e => searchFilter(e.target.value));
 
 document.getElementById('expandAll').addEventListener('click', () => {
   document.querySelectorAll('.tree li.collapsed').forEach(li => {
     li.classList.remove('collapsed');
     const t = li.querySelector('.toggle');
-    if(t) t.textContent = '▾';
+    if(t) t.style.transform = 'rotate(0deg)';
   });
 });
 document.getElementById('collapseAll').addEventListener('click', () => {
@@ -305,7 +423,7 @@ document.getElementById('collapseAll').addEventListener('click', () => {
     if(li.querySelector('ul')){
       li.classList.add('collapsed');
       const t = li.querySelector('.toggle');
-      if(t) t.textContent = '▸';
+      if(t) t.style.transform = 'rotate(-90deg)';
     }
   });
 });
