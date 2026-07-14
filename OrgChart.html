@@ -52,8 +52,8 @@
 
   .dept-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;}
   .chip{
-    display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:20px;
-    font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid transparent;
+    display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:20px;min-height:38px;
+    font-size:12.5px;font-weight:500;cursor:pointer;border:1.5px solid transparent;
     background:var(--paper-raised);color:var(--text-mute);transition:all .15s ease;
     box-shadow:0 1px 3px rgba(0,0,0,0.04);
   }
@@ -91,9 +91,17 @@
   .node-dept{display:inline-flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;margin-top:3px;}
   .node-dept .dot{width:6px;height:6px;border-radius:50%;}
   .dotted-badge{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--gold);border:1px dashed var(--gold);border-radius:20px;padding:2px 7px;white-space:nowrap;}
-  .toggle{font-size:12px;color:var(--text-mute);width:16px;text-align:center;flex-shrink:0;transition:transform .15s ease;display:inline-block;}
+  .toggle{
+    font-size:16px;color:var(--ink-soft);width:26px;height:26px;text-align:center;flex-shrink:0;
+    transition:transform .15s ease, background .15s ease;display:flex;align-items:center;justify-content:center;
+    border-radius:50%;background:var(--paper);border:1.5px solid var(--rule);cursor:pointer;
+  }
+  .toggle:hover{background:var(--gold-soft);border-color:var(--gold);}
+  .toggle:active{transform:scale(0.9);}
   .leaf-dot{width:6px;height:6px;border-radius:50%;background:var(--rule);flex-shrink:0;}
   .collapsed > ul{display:none;}
+  .node.ancestor-only{opacity:.55;}
+  .node.ancestor-only .node-name{color:var(--text-mute);}
 
   .empty{text-align:center;padding:60px 20px;color:var(--text-mute);font-family:'IBM Plex Mono',monospace;font-size:13px;}
 
@@ -138,6 +146,25 @@
   @media (max-width:640px){
     .field{grid-template-columns:1fr;gap:3px;}
     .masthead-meta{text-align:left;}
+    .wrap{padding:20px 14px 70px;}
+    .masthead{padding-bottom:16px;}
+    .toolbar{gap:8px;}
+    .toolbar .btn{flex:1 1 auto;padding:12px 10px;font-size:12px;}
+    .search{width:100%;flex-basis:100%;font-size:16px;padding:13px 14px;}
+    .chip{padding:9px 14px;font-size:12.5px;min-height:38px;}
+    .chip .dot{width:9px;height:9px;}
+    .node{max-width:78vw;padding:11px 13px;gap:9px;}
+    .node-name{font-size:14.5px;}
+    .toggle{width:30px;height:30px;font-size:17px;}
+    .tree ul{padding-left:20px;}
+    .tree ul li{padding-left:20px;}
+    .panel-body{padding:18px 20px 26px;}
+    .panel-head{padding:20px 20px 16px;}
+    .legend{font-size:11px;gap:12px;}
+  }
+  @media (max-width:400px){
+    .node{max-width:70vw;}
+    .masthead-title{font-size:22px;}
   }
 
   footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--rule);font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mute);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
@@ -252,6 +279,20 @@ function roots(pool){
   return pool.filter(e => !e.reportsTo || !ids.has(e.reportsTo));
 }
 
+// Returns only the people in `dept`, plus whichever managers above them
+// are needed to keep the tree connected up to the top (so the branch doesn't float disconnected).
+function deptFilteredPool(dept){
+  const pool = activeEmployees();
+  const byIdActive = {}; pool.forEach(e => byIdActive[e.employeeId] = e);
+  const matches = pool.filter(e => e.department === dept);
+  const idsToShow = new Set();
+  matches.forEach(m => {
+    let cur = m;
+    while(cur){ idsToShow.add(cur.employeeId); cur = byIdActive[cur.reportsTo]; }
+  });
+  return pool.filter(e => idsToShow.has(e.employeeId));
+}
+
 function dottedBadge(e){
   const names = [e.additionalReportTo1, e.additionalReportTo2]
     .filter(id => id && byId[id])
@@ -262,10 +303,10 @@ function dottedBadge(e){
 
 function nodeHtml(e, pool){
   const kids = children(e.employeeId, pool);
-  const dim = activeFilterDept && e.department !== activeFilterDept;
+  const isAncestorOnly = activeFilterDept && e.department !== activeFilterDept;
   const c = deptColor(e.department);
   return `
-    <div class="node ${dim?'dimmed':''}" style="border-left-color:${c}" onclick="openDetail('${e.employeeId}', event)">
+    <div class="node ${isAncestorOnly?'ancestor-only':''}" style="border-left-color:${c}" onclick="openDetail('${e.employeeId}', event)">
       ${kids.length ? '<span class="toggle">▾</span>' : '<span class="leaf-dot"></span>'}
       <div>
         <div class="node-name">${esc(e.name)}</div>
@@ -288,15 +329,21 @@ function buildBranch(e, pool){
 
 function renderTree(){
   const el = document.getElementById('content');
-  const pool = activeEmployees();
+  const pool = activeFilterDept ? deptFilteredPool(activeFilterDept) : activeEmployees();
   const top = roots(pool);
   if(!top.length){
     el.innerHTML = `<div class="empty">No active employees found.</div>`;
     return;
   }
-  el.innerHTML = `<div class="tree"><ul class="tree-root">` +
+  const note = activeFilterDept
+    ? `<div class="legend" style="margin-bottom:14px;"><span class="legend-item">Showing <strong style="color:var(--ink)">${esc(activeFilterDept)}</strong> only — faded cards are managers shown just to keep the chain connected</span></div>`
+    : '';
+  el.innerHTML = note + `<div class="tree"><ul class="tree-root">` +
     top.map(r => buildBranch(r, pool)).join('') + `</ul></div>`;
+  attachToggles(el);
+}
 
+function attachToggles(el){
   el.querySelectorAll('.toggle').forEach(t => {
     t.addEventListener('click', ev => {
       ev.stopPropagation();
@@ -328,6 +375,7 @@ function searchFilter(q){
   const top = roots(filteredPool);
   el.innerHTML = `<div class="tree"><ul class="tree-root">` +
     top.map(r => buildBranch(r, filteredPool)).join('') + `</ul></div>`;
+  attachToggles(el);
 }
 
 function freqLabel(status){
