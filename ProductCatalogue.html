@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Catalogue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A; --ink-soft:#33456e; --paper:#F7F5EF; --paper-raised:#FFFFFF;
+    --rule:#DDD7C6; --gold:#B98A1E; --gold-soft:#F3E6C6;
+    --green:#3E6B4F; --green-soft:#E4EEE6; --red:#8C3B2E; --red-soft:#F3E3DF;
+    --text:#241F16; --text-mute:#726C5B;
+    --shadow:0 10px 28px rgba(27,42,74,0.10);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;color:var(--text);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased;
+    background: radial-gradient(1200px 500px at 15% -10%, rgba(185,138,30,0.06), transparent 60%), var(--paper); min-height:100vh;}
+  .wrap{max-width:1280px;margin:0 auto;padding:30px 20px 90px;}
+
+  .masthead{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-bottom:18px;margin-bottom:8px;border-bottom:3px solid var(--ink);}
+  .masthead-title{font-family:'Source Serif 4',serif;font-weight:700;font-size:clamp(24px,3.6vw,34px);color:var(--ink);margin:0;}
+  .masthead-sub{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-mute);margin-top:5px;}
+  .masthead-meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mute);text-align:right;}
+  .gold-rule{height:2px;background:linear-gradient(90deg, var(--gold), transparent 70%);margin-bottom:24px;}
+
+  .toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+  .search{flex:1;min-width:200px;padding:13px 15px;font-size:16px;border:1.5px solid var(--rule);background:var(--paper-raised);border-radius:6px;color:var(--text);}
+  .search:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(27,42,74,0.08);}
+  .btn{padding:12px 15px;font-size:12.5px;font-family:'IBM Plex Mono',monospace;background:var(--paper-raised);border:1.5px solid var(--rule);border-radius:6px;cursor:pointer;color:var(--ink-soft);white-space:nowrap;transition:all .15s ease;}
+  .btn:hover{border-color:var(--ink);color:var(--ink);box-shadow:var(--shadow);transform:translateY(-1px);}
+  .btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+  .chip{display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:20px;min-height:38px;font-size:12.5px;font-weight:500;cursor:pointer;border:1.5px solid var(--rule);background:var(--paper-raised);color:var(--text-mute);transition:all .15s ease;}
+  .chip:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
+  .chip.active{border-color:var(--gold);color:var(--ink);font-weight:600;background:var(--gold-soft);}
+  .chip .count{font-family:'IBM Plex Mono',monospace;font-size:10px;opacity:.7;}
+
+  .sub-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:24px;}
+  .sub-chip{padding:6px 12px;border-radius:20px;font-size:11.5px;cursor:pointer;border:1px dashed var(--rule);color:var(--text-mute);background:transparent;transition:all .15s ease;}
+  .sub-chip:hover{border-color:var(--ink);color:var(--ink);}
+  .sub-chip.active{border-style:solid;border-color:var(--ink);background:var(--ink);color:#fff;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(230px,1fr));gap:18px;}
+  .card{background:var(--paper-raised);border:1.5px solid var(--rule);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .15s ease, box-shadow .15s ease;display:flex;flex-direction:column;}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+  .card-img{aspect-ratio:1/1;background:var(--gold-soft);position:relative;overflow:hidden;}
+  .card-img img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-img .fallback{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--ink),var(--ink-soft));color:#fff;font-family:'Source Serif 4',serif;font-weight:700;font-size:34px;}
+  .stock-badge{position:absolute;top:9px;right:9px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:20px;}
+  .stock-badge.in{background:var(--green-soft);color:var(--green);}
+  .stock-badge.low{background:var(--gold-soft);color:var(--gold);}
+  .stock-badge.out{background:var(--red-soft);color:var(--red);}
+  .featured-badge{position:absolute;top:9px;left:9px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:20px;background:rgba(255,255,255,0.92);color:var(--gold);}
+  .card-body{padding:13px 14px 15px;flex:1;display:flex;flex-direction:column;}
+  .card-cat{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;}
+  .card-name{font-family:'Source Serif 4',serif;font-weight:600;font-size:15px;color:var(--ink);line-height:1.3;margin-bottom:8px;flex:1;}
+  .card-price{font-family:'Source Serif 4',serif;font-weight:700;font-size:16.5px;color:var(--ink);}
+  .card-price span{font-size:11px;font-weight:500;color:var(--text-mute);font-family:'IBM Plex Sans',sans-serif;}
+
+  .empty{text-align:center;padding:60px 20px;color:var(--text-mute);font-family:'IBM Plex Mono',monospace;font-size:13px;}
+
+  .overlay{position:fixed;inset:0;background:rgba(27,42,74,0.4);display:none;z-index:40;}
+  .overlay.show{display:block;}
+  .panel{position:fixed;top:0;right:0;height:100%;width:min(480px,94vw);background:var(--paper-raised);z-index:41;box-shadow:-10px 0 30px rgba(0,0,0,0.18);transform:translateX(100%);transition:transform .25s ease;overflow-y:auto;}
+  .panel.show{transform:translateX(0);}
+  .panel-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.9);border:none;font-size:18px;cursor:pointer;color:var(--ink);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:2;}
+  .panel-img{width:100%;aspect-ratio:1/0.85;position:relative;overflow:hidden;background:var(--gold-soft);}
+  .panel-img img{width:100%;height:100%;object-fit:cover;display:block;}
+  .panel-img .fallback{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--ink),var(--ink-soft));color:#fff;font-family:'Source Serif 4',serif;font-weight:700;font-size:52px;}
+  .panel-body{padding:22px 26px 32px;}
+  .panel-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);}
+  .panel-title{font-family:'Source Serif 4',serif;font-weight:700;font-size:23px;color:var(--ink);margin:6px 0 10px;}
+  .panel-price-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .panel-price{font-family:'Source Serif 4',serif;font-weight:700;font-size:24px;color:var(--ink);}
+  .panel-price span{font-size:12px;font-weight:500;color:var(--text-mute);font-family:'IBM Plex Sans',sans-serif;}
+  .panel-desc{font-size:14px;line-height:1.65;color:var(--text);margin-bottom:20px;}
+  .field{padding:13px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:120px 1fr;gap:14px;}
+  .field:last-child{border-bottom:none;}
+  .field-label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-mute);}
+  .field-value{font-size:13.5px;line-height:1.55;color:var(--text);}
+  .stamp{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid currentColor;display:inline-block;}
+  .stamp.in{color:var(--green);background:var(--green-soft);}
+  .stamp.low{color:var(--gold);background:var(--gold-soft);}
+  .stamp.out{color:var(--red);background:var(--red-soft);}
+
+  @media (max-width:640px){
+    .field{grid-template-columns:1fr;gap:3px;}
+    .grid{grid-template-columns:repeat(auto-fill, minmax(150px,1fr));gap:12px;}
+    .wrap{padding:20px 14px 70px;}
+    .search{font-size:16px;}
+    .chip{padding:9px 14px;}
+  }
+
+  footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--rule);font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mute);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <div>
+      <h1 class="masthead-title">Product Catalogue</h1>
+      <div class="masthead-sub">Categories · Specifications · Live stock status</div>
+    </div>
+    <div class="masthead-meta" id="meta"></div>
+  </div>
+  <div class="gold-rule"></div>
+
+  <div class="toolbar">
+    <input type="text" class="search" id="search" placeholder="Search products, categories, specs…">
+    <button class="btn" id="featuredBtn">★ Featured only</button>
+  </div>
+
+  <div class="chips" id="catChips"></div>
+  <div class="sub-chips" id="subChips"></div>
+
+  <div id="content"></div>
+
+  <footer>
+    <span>Data sourced from catalogue.json</span>
+    <span id="foot-count"></span>
+  </footer>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="panel" id="panel"></div>
+
+<script>
+let ITEMS = [];
+let activeCat = null, activeSub = null, featuredOnly = false;
+
+function esc(s){
+  const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+  return (s||"").toString().replace(/[&<>"']/g, c => map[c]);
+}
+function stockClass(s){
+  const v=(s||'').toLowerCase();
+  if(v.includes('out')) return 'out';
+  if(v.includes('low')) return 'low';
+  return 'in';
+}
+function fmtPrice(p, unit){
+  const n = Number(p);
+  return `₹${isNaN(n)?p:n.toLocaleString('en-IN')}${unit?` <span>/ ${esc(unit)}</span>`:''}`;
+}
+function initials(name){
+  return (name||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+async function load(){
+  try{
+    const res = await fetch('catalogue.json', {cache:'no-store'});
+    const json = await res.json();
+    ITEMS = json.items || [];
+    document.getElementById('meta').textContent = `${ITEMS.length} products` + (json.generatedAt?` · Updated ${json.generatedAt}`:'');
+    document.getElementById('foot-count').textContent = `${ITEMS.length} products loaded`;
+    buildCatChips();
+    render();
+  }catch(e){
+    document.getElementById('content').innerHTML = `<div class="empty">Could not load catalogue.json.<br>Make sure it sits alongside ProductCatalogue.html.</div>`;
+    console.error(e);
+  }
+}
+
+function buildCatChips(){
+  const cats = [...new Set(ITEMS.map(i=>i.category))];
+  const el = document.getElementById('catChips');
+  el.innerHTML = `<div class="chip ${!activeCat?'active':''}" onclick="setCat(null)">All <span class="count">${ITEMS.length}</span></div>` +
+    cats.map(c => `<div class="chip ${activeCat===c?'active':''}" onclick="setCat('${esc(c)}')">${esc(c)} <span class="count">${ITEMS.filter(i=>i.category===c).length}</span></div>`).join('');
+}
+
+function buildSubChips(){
+  const el = document.getElementById('subChips');
+  if(!activeCat){ el.innerHTML = ''; return; }
+  const subs = [...new Set(ITEMS.filter(i=>i.category===activeCat).map(i=>i.subcategory))];
+  el.innerHTML = `<div class="sub-chip ${!activeSub?'active':''}" onclick="setSub(null)">All ${esc(activeCat)}</div>` +
+    subs.map(s => `<div class="sub-chip ${activeSub===s?'active':''}" onclick="setSub('${esc(s)}')">${esc(s)}</div>`).join('');
+}
+
+function setCat(c){ activeCat = c; activeSub = null; buildCatChips(); buildSubChips(); render(); }
+function setSub(s){ activeSub = s; buildSubChips(); render(); }
+
+document.getElementById('featuredBtn').addEventListener('click', () => {
+  featuredOnly = !featuredOnly;
+  document.getElementById('featuredBtn').classList.toggle('active', featuredOnly);
+  render();
+});
+
+function filteredItems(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  return ITEMS.filter(i => {
+    if(activeCat && i.category !== activeCat) return false;
+    if(activeSub && i.subcategory !== activeSub) return false;
+    if(featuredOnly && (i.featured||'').toLowerCase() !== 'yes') return false;
+    if(q){
+      const hay = `${i.name} ${i.category} ${i.subcategory} ${i.specs} ${i.description}`.toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function cardHtml(i){
+  return `
+    <div class="card" onclick="openDetail('${esc(i.productId)}')">
+      <div class="card-img">
+        <img src="images/${esc(i.imageFile)}" alt="${esc(i.name)}" loading="lazy"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="fallback">${esc(initials(i.name))}</div>
+        <span class="stock-badge ${stockClass(i.stockStatus)}">${esc(i.stockStatus)}</span>
+        ${(i.featured||'').toLowerCase()==='yes' ? `<span class="featured-badge">★ Featured</span>` : ''}
+      </div>
+      <div class="card-body">
+        <div class="card-cat">${esc(i.subcategory)}</div>
+        <div class="card-name">${esc(i.name)}</div>
+        <div class="card-price">${fmtPrice(i.price, i.unit)}</div>
+      </div>
+    </div>`;
+}
+
+function render(){
+  const el = document.getElementById('content');
+  const items = filteredItems();
+  if(!items.length){ el.innerHTML = `<div class="empty">No products match.</div>`; return; }
+  el.innerHTML = `<div class="grid">` + items.map(cardHtml).join('') + `</div>`;
+}
+
+function openDetail(id){
+  const i = ITEMS.find(x => x.productId === id);
+  if(!i) return;
+  const panel = document.getElementById('panel');
+  panel.innerHTML = `
+    <div class="panel-img">
+      <button class="panel-close" onclick="closePanel()">✕</button>
+      <img src="images/${esc(i.imageFile)}" alt="${esc(i.name)}"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="fallback">${esc(initials(i.name))}</div>
+    </div>
+    <div class="panel-body">
+      <div class="panel-eyebrow">${esc(i.category)} · ${esc(i.subcategory)}</div>
+      <div class="panel-title">${esc(i.name)}</div>
+      <div class="panel-price-row">
+        <div class="panel-price">${fmtPrice(i.price, i.unit)}</div>
+        <span class="stamp ${stockClass(i.stockStatus)}">${esc(i.stockStatus)}</span>
+      </div>
+      <div class="panel-desc">${esc(i.description)}</div>
+      <div class="field"><div class="field-label">Specifications</div><div class="field-value">${esc(i.specs)}</div></div>
+      <div class="field"><div class="field-label">Product ID</div><div class="field-value">${esc(i.productId)}</div></div>
+      <div class="field"><div class="field-label">Unit</div><div class="field-value">${esc(i.unit)}</div></div>
+    </div>`;
+  document.getElementById('overlay').classList.add('show');
+  panel.classList.add('show');
+}
+
+function closePanel(){
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('panel').classList.remove('show');
+}
+document.getElementById('overlay').addEventListener('click', closePanel);
+document.getElementById('search').addEventListener('input', render);
+
+load();
+</script>
+</body>
+</html>
